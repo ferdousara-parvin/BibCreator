@@ -3,29 +3,28 @@
 package bibcreator;
 
 // Imports
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Scanner;
 
 /**
- * PURPOSE NOT DONEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE!!!!!!!
  * <h1>BibCreator class is the driver class</h1>
  * The purpose of this program is to review some concepts that we learnt
  * previously concerning Exception Handling and File I/O. For this assignment,
- * we had to create a BibCreator class which possessed 4 attributes (price,
- * author, ISB, and title). We then implemented this class in the driver class
- * called Assignment1 (which simulated a book store) to keep track of the books.
- * We were able to add new Books to the "store", change information of a book,
- * display all books by a specific author and display all books under a certain
- * price <br>
+ * we had to create a BibCreator class which reads from Bib files containing one or more articles
+ * and created 3 types of formatted bibliographies  (IEEE, ACM, and NJ) which are written in JSON outputfiles.
+ * The program also lets the user review any of the JSON files <br>
+ * @author Viveka Anban (40063308) and Ferdousara Parvin (40062738)
  * COMP249<br>
  * Assignment 3 <br>
  * Due date: Monday, March 19th, 2018</br>
  *
- * @author Viveka Anban(40063308) and Ferdousara Parvin(40062738) COMP249
  */
 public class BibCreator {
 
@@ -38,6 +37,10 @@ public class BibCreator {
     static final int ONE = 1;
     static final int TWO = 2;
     static final int THREE = 3;
+    static final int FOUR = 4;
+    static final int FIVE = 5;
+    static final int SIX = 6;
+    static final int SEVEN = 7;
     static final int TEN = 10;
     static final String IEEE = "IEEE";
     static final String ACM = "ACM";
@@ -57,6 +60,7 @@ public class BibCreator {
                 + " Welcome to Viveka and Ferdousara's program\n"
                 + "--------------------------------------------");
 
+        // --------------- PART 1 -----------------------------
         // Create some variables
         final String FILENAME = "Latex"; // We assume that every file that we will open starts with the word "Latex"
         String jsonFileName = ""; // This variable stores the name of the current json file we are working with
@@ -120,7 +124,7 @@ public class BibCreator {
                 indexOutputs = ZERO;
             }
 
-            // Invoke method processFilesForValidation
+            // Invoke method processFilesForValidation 
             for (int i = ZERO; i < inputs.length; i++) {
                 boolean incrementCounterInvalidFiles = processFilesForValidation(inputs[i], outputs[i], (i + 1));
 
@@ -136,7 +140,7 @@ public class BibCreator {
 
             // Close all print writers
             for (int i = indexInputs; i >= ZERO; i--) {
-                while (indexOutputs >= 0) {
+                while (indexOutputs >= ZERO) {
                     outputs[indexInputs][indexOutputs].close();
                     indexOutputs--;
                 }
@@ -169,18 +173,89 @@ public class BibCreator {
 
             // Print a message telling the user how many files were invalid
             System.out.println("\nA total of " + counterInvalidFiles + " files were invalid, and could not be processed. All other " + (TEN - counterInvalidFiles) + " \"Valid\" files have been created.");
-
-            // Print closing message
-            System.out.println(
-                    "\n--------------------------------------------\n"
-                    + " Thank you for using our Bib Creator. Goodbye!\n"
-                    + "--------------------------------------------\n");
         }
+
+        // ---------------------- PART 2 ---------------------------------
+        Scanner kb = new Scanner(System.in);
+
+        // Prompt user to enter the name of the JSON file to be reviewed
+        System.out.print("Please enter the name of one of the files you need to review: ");
+        String fileToBeReviewed = kb.next().trim();
+        System.out.println();
+        BufferedReader bf = null;
+
+        // Try printing the content of the desired file
+        try {
+            bf = new BufferedReader(new FileReader("Json_Files/" + fileToBeReviewed)); // Create BufferedReader. Can throw FileNotFoundException 
+            printReviewedFile(bf);
+        } catch (FileNotFoundException e) { // Invalid JSON file name
+
+            // Prompt user to try again
+            System.out.print("Could not open input file. File does not exist; possibly it could not be created!"
+                    + "\nHowever, you will be allowed another chance to enter another file name: ");
+
+            fileToBeReviewed = kb.next().trim();
+            System.out.println();
+
+            // Try to print the content of the desired file once again
+            try {
+                bf = new BufferedReader(new FileReader("Json_Files/" + fileToBeReviewed)); // Create BufferedReader. Can throw FileNotFoundException 
+                printReviewedFile(bf);
+            } catch (FileNotFoundException f) { // Invalid JSON file name once again
+
+                // Exit program 
+                System.out.println("Could not open output file again! Either file does not exist or could not be created."
+                        + "Sorry! I am unable to display your desired files! Program will exit!");
+
+                System.exit(ZERO);
+                
+            } catch (IOException g) { // Can be thrown by readLine method from printReviewedFile method
+                
+                // Exit program
+                System.out.println("Error! Could not read content of the file. Program will now terminate");
+                System.exit(ZERO);
+            }
+        } catch (IOException e) { // Can be thrown by readLine method from printReviewedFile method
+            
+            // Exit program
+            System.out.println("Error! Could not read content of the file. Program will now terminate");
+            System.exit(ZERO);
+        }
+        
+        kb.close();
+
+        // Print closing message
+        System.out.println(
+                "\n--------------------------------------------\n"
+                + " Thank you for using our Bib Creator. Goodbye!\n"
+                + "--------------------------------------------\n");
 
     }
 
     /**
-     * This methods deletes output files that are linked to invalid input files
+     * This method prints the content of the file that needs to be reviewed
+     * 
+     * @param bf BufferedReader object which reads from the JSON file to be reviewed
+     * @throws IOException - Can be thrown by readLine method
+     */
+    public static void printReviewedFile(BufferedReader bf) throws IOException {
+
+        // Read line by line from input file
+        String s = bf.readLine();
+
+        while (s != null) // The readLine() method returns null when it is the end of the file
+        {
+            System.out.println(s);
+            s = bf.readLine();
+        }
+        
+        // Must close the stream to flush the buffer
+        bf.close();
+
+    }
+
+    /**
+     * This methods deletes output JSON files that are linked to invalid input Bib files
      *
      * @param pathDirectory Directory where there are files to be deleted
      */
@@ -200,7 +275,6 @@ public class BibCreator {
         }
     }
 
-    // Process one Bib input file at a time
     /**
      * This method processes one Bib input file at a time
      *
@@ -238,31 +312,24 @@ public class BibCreator {
                 // For loop to run through bibliography array
                 for (int i = ZERO; i < bibliography.length; i++) {
 
-                    // 1. Determine the element key 
+                    // 1. Determine the element key.
                     String elementKey;
 
                     if (s1.contains("@ARTICLE{")) { // Special case: beginning of an article, retrieve first element key
                         counterNbFiles++;
-//DEBUGGER:                        
-                        System.out.println("\n" + fileNumber + " ARTICLE #" + counterNbFiles);
-
                         elementKey = s1.substring(s1.lastIndexOf(",") + ONE, s1.indexOf("=")).trim(); // at beginning of an article, first element key is enclosed between , and =
 
                     } else { // for every following field/element key
                         elementKey = s1.substring(ZERO, s1.indexOf("=")).trim(); // every element key runs from index 0 to the index before the = character
                     }
 
-//DEBUGGER:                   
-                    System.out.println("S1: " + s1);
                     bibliography[i][ZERO] = elementKey.trim();
-//DEBUGGER:                    
-                    System.out.println("KEY:" + elementKey);
 
                     // 2. Determine the element value.
                     String elementValue = s1.substring(s1.lastIndexOf("{") + 1, s1.length()).trim();
                     bibliography[i][ONE] = elementValue.trim();
 
-                    // Invalid input file (empty field)
+                    // Invalid input file (empty field), must throw FileInvalidException
                     if (elementValue.trim().isEmpty()) {
                         isNotValid = true;
                         throw new FileInvalidException(
@@ -272,27 +339,28 @@ public class BibCreator {
                                 + "File is invalid: Field \"" + elementKey + "\" is empty. Processing stopped at this point. Other empty fields may be present as well!\n");
 
                     }
-//DEBUGGER:
-                    System.out.println("VALUE:" + elementValue);
-
-                    if (i < bibliography.length - ONE) {
+                    
+                    // Retrieve the next token todo: WHATTTTTTTTTTTTTTTTTT WHY -ONE
+                    if (i < bibliography.length - ONE) { 
                         s1 = input.next().trim();
                     }
 
                 }
 
+                // Invoke makeBibliography method for each Bib file to output bibliographies in the JSON output files
+                // output.length is 3 meaning that each type (IEEE, ACM, NJ) of JSON file will have an output 
                 for (int i = ZERO; i < output.length; i++) {
-                    output[i].append(makeBibliography2(bibliography, counterNbFiles)[i]);
+                    output[i].append(makeBibliography(bibliography, counterNbFiles)[i]);
                 }
 
             }
 
-        } catch (FileInvalidException e) {
+        } catch (FileInvalidException e) { // todo: doesnt workkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk
             System.out.println(e); // Print error/warning message
 
-            File invalidFile1 = new File("Json_Files/" + IEEE + fileNumber + ".json");
-            File invalidFile2 = new File("Json_Files/" + ACM + fileNumber + ".json");
-            File invalidFile3 = new File("Json_Files/" + NJ + fileNumber + ".json");
+            File invalidFile1 = new File("Json_Files\\" + IEEE + fileNumber + ".json");
+            File invalidFile2 = new File("Json_Files\\" + ACM + fileNumber + ".json");
+            File invalidFile3 = new File("Json_Files\\" + NJ + fileNumber + ".json");
 
             // Delete Json output files that correspond to the invalid Bib input file
             invalidFile1.delete();
@@ -306,164 +374,19 @@ public class BibCreator {
     }
 
     /**
-     *
-     * @param bibliography
-     * @param counterNbFiles
-     * @return
+     * This program generates the bibliographies for IEEE, ACM, and NJ formats 
+     * Index = 0 is for IEE, 1 is for ACM, 2 is for NJ
+     *  
+     * @param bibliography 2D array which contains the element keys and corresponding element value
+     * @param counterNbFiles Counter to keep track of the number of bibliographies to be created (used for the ACM format only)
+     * @return String[] - An array of strings containing the bibliographies for each article for a specific format
      */
     public static String[] makeBibliography(String[][] bibliography, int counterNbFiles) {
 
+        //This will contain all the elements that IEEE, ACM and NJ bibliographies would need (9 fields) in their right order.
+        String[][] sortedBibliography = new String[9][THREE];
 
-        /*
-         THE IEEE_OUPUT WOULD GO IN THE OUTPUTS[i][0] FILE
-         THE ACM WOULD GO IN THE OUTPUTS[i][1] FILE
-         THE NJ WOULD GO IN THE OUTPUTS[i][2] FILE
-         */
-        String ieee_output = "";
-        String acm_output = "[" + counterNbFiles + "]\t";
-        String nj_output = "";
-
-        //Add authors in bibliography
-        for (int i = ZERO; i < bibliography.length; i++) {
-            if (bibliography[i][ZERO].equals("author")) {
-
-                //Create an array containg only the author names (names used to be seperated with "and")
-                String[] authors = bibliography[i][ONE].split("and");
-
-                for (int a = ZERO; a < authors.length; a++) {
-
-                    authors[a] = authors[a].trim();
-
-                    //IEEE and NJ OUTPUT
-                    if (a < authors.length - ONE) {
-                        ieee_output += authors[a] + ", ";
-                        nj_output += authors[a] + " & ";
-                    } else {
-                        ieee_output += authors[a] + ". ";
-                        nj_output += authors[a] + ". ";
-                    }
-
-                    //ACM OUTPUT
-                    if (authors.length == ONE) {
-                        acm_output += authors[a] + ". ";
-                    } else if (a == ZERO) {
-                        acm_output += authors[a] + " et al. ";
-                    }
-
-                }
-
-                break;
-            }
-        }
-
-        //Add the year only to ACM to the bibliography
-        for (int i = 0; i < bibliography.length; i++) {
-            if (bibliography[i][ZERO].equals("year")) {
-                acm_output += " " + bibliography[i][ONE] + ". ";
-                break;
-            }
-        }
-
-        //Add title to the bibliography
-        for (int i = 0; i < bibliography.length; i++) {
-            if (bibliography[i][ZERO].equals("title")) {
-                ieee_output += "\"" + bibliography[i][ONE] + "\", ";
-                acm_output += bibliography[i][ONE] + ". ";
-                nj_output += bibliography[i][ONE] + ". ";
-                break;
-            }
-        }
-
-        //Add the journal to the bibliography
-        for (int i = 0; i < bibliography.length; i++) {
-            if (bibliography[i][ZERO].equals("journal")) {
-                ieee_output += bibliography[i][ONE] + ", ";
-                acm_output += bibliography[i][ONE] + ". ";
-                nj_output += bibliography[i][ONE] + ". ";
-                break;
-            }
-        }
-
-        //Add volume to the bibliography
-        for (int i = 0; i < bibliography.length; i++) {
-            if (bibliography[i][ZERO].equals("volume")) {
-                ieee_output += "vol. " + bibliography[i][ONE] + ", ";
-                acm_output += bibliography[i][ONE] + ", ";
-                nj_output += bibliography[i][ONE] + ", ";
-                break;
-            }
-        }
-
-        //Add number to the bibliography
-        for (int i = 0; i < bibliography.length; i++) {
-            if (bibliography[i][ZERO].equals("number")) {
-                ieee_output += "no. " + bibliography[i][ONE] + ", ";
-                acm_output += bibliography[i][ONE] + " ";
-                break;
-            }
-        }
-
-        //Add the year only to ACM to the bibliography
-        for (int i = 0; i < bibliography.length; i++) {
-            if (bibliography[i][ZERO].equals("year")) {
-                acm_output += "(" + bibliography[i][ONE] + "), ";
-                break;
-            }
-        }
-
-        //Add the number of pages to the bibliography
-        for (int i = 0; i < bibliography.length; i++) {
-            if (bibliography[i][ZERO].equals("pages")) {
-                ieee_output += "p. " + bibliography[i][ONE] + ", ";
-                acm_output += bibliography[i][ONE] + ". ";
-                nj_output += bibliography[i][ONE];
-            }
-        }
-
-        //Add the year to NJ to the bibliography
-        for (int i = 0; i < bibliography.length; i++) {
-            if (bibliography[i][ZERO].equals("year")) {
-                nj_output += "(" + bibliography[i][ONE] + ").\n\n";
-                break;
-            }
-        }
-
-        //Add the month and year only to the ieee bibliography
-        for (int i = 0; i < bibliography.length; i++) {
-            if (bibliography[i][ZERO].equals("month")) {
-                ieee_output += bibliography[i][ONE] + " ";
-                break;
-            }
-        }
-        for (int i = 0; i < bibliography.length; i++) {
-            if (bibliography[i][ZERO].equals("year")) {
-                ieee_output += bibliography[i][ONE] + ".\n\n";
-                break;
-            }
-        }
-
-        for (int i = 0; i < bibliography.length; i++) {
-            if (bibliography[i][ZERO].equals("doi")) {
-                acm_output += "DOI:https://doi.org/" + bibliography[i][ONE] + ".\n\n";
-                break;
-            }
-        }
-
-        String final_output[] = {ieee_output, acm_output, nj_output};
-        return final_output;
-    }
-
-    /**
-     *
-     * @param bibliography
-     * @param counterNbFiles
-     * @return
-     */
-    public static String[] makeBibliography2(String[][] bibliography, int counterNbFiles) {
-
-        //This will contain all the elements that IEEE, ACM and NJ bibliographies would need in their order.
-        String[][] sortedBibliography = new String[9][3];
-
+        // Initialize each String element to empty fields in the 2D array because not every format has 9 fields
         for (int i = ZERO; i < sortedBibliography.length; i++) {
             for (int j = ZERO; j < sortedBibliography[i].length; j++) {
                 sortedBibliography[i][j] = "";
@@ -471,12 +394,12 @@ public class BibCreator {
         }
 
         for (int i = ZERO; i < bibliography.length; i++) {
-            String element = bibliography[i][ZERO].toLowerCase();
+            String element = bibliography[i][ZERO].toLowerCase(); // retrieve element key 
 
-            switch (element) {
+            switch (element) { // match element key with the cases
                 case "author":
-                    String[] authors = bibliography[i][ONE].split("and");
-                    sortedBibliography[ZERO][ONE] = "[" + counterNbFiles + "]\t";
+                    String[] authors = bibliography[i][ONE].split("and"); // Create an array of string to store all the authors of an article
+                    sortedBibliography[ZERO][ONE] = "[" + counterNbFiles + "]\t"; // For ACM format
 
                     for (int a = ZERO; a < authors.length; a++) {
 
@@ -492,7 +415,7 @@ public class BibCreator {
                         }
 
                         //ACM OUTPUT
-                        if (authors.length == ZERO) {
+                        if (authors.length == ONE) { // todo: ONE NOT ZERO RIGHHHHHHHHHHHHHHHHHHHHHHHTTTTT???????
                             sortedBibliography[ZERO][ONE] += authors[a] + ". ";
                         } else if (a == ZERO) {
                             sortedBibliography[ZERO][ONE] += authors[a] + " et al. ";
@@ -513,30 +436,30 @@ public class BibCreator {
                     break;
                 case "volume":
                     sortedBibliography[THREE][ZERO] = "vol. " + bibliography[i][ONE] + ", ";
-                    sortedBibliography[4][ONE] = bibliography[i][ONE] + ", ";
+                    sortedBibliography[FOUR][ONE] = bibliography[i][ONE] + ", ";
                     sortedBibliography[THREE][TWO] = bibliography[i][ONE] + ", ";
                     break;
                 case "number":
-                    sortedBibliography[4][ZERO] = "no. " + bibliography[i][ONE] + ", ";
-                    sortedBibliography[5][ONE] = bibliography[i][ONE] + " ";
-                    sortedBibliography[4][TWO] = "";
+                    sortedBibliography[FOUR][ZERO] = "no. " + bibliography[i][ONE] + ", ";
+                    sortedBibliography[FIVE][ONE] = bibliography[i][ONE] + " ";
+                    sortedBibliography[FOUR][TWO] = "";
                     break;
                 case "year":
-                    sortedBibliography[7][ZERO] = bibliography[i][ONE] + ".\n\n";
+                    sortedBibliography[SEVEN][ZERO] = bibliography[i][ONE] + ".\n\n";
                     sortedBibliography[ONE][ONE] = bibliography[i][ONE] + ". ";
-                    sortedBibliography[6][ONE] = "(" + bibliography[i][ONE] + "), ";
-                    sortedBibliography[6][TWO] = "(" + bibliography[i][ONE] + ").\n\n";
+                    sortedBibliography[SIX][ONE] = "(" + bibliography[i][ONE] + "), ";
+                    sortedBibliography[SIX][TWO] = "(" + bibliography[i][ONE] + ").\n\n";
                     break;
                 case "pages":
-                    sortedBibliography[5][ZERO] = "p. " + bibliography[i][ONE] + ", ";
-                    sortedBibliography[7][ONE] = bibliography[i][ONE] + ". ";
-                    sortedBibliography[5][TWO] = bibliography[i][ONE];
+                    sortedBibliography[FIVE][ZERO] = "p. " + bibliography[i][ONE] + ", ";
+                    sortedBibliography[SEVEN][ONE] = bibliography[i][ONE] + ". ";
+                    sortedBibliography[FIVE][TWO] = bibliography[i][ONE];
                     break;
                 case "doi":
                     sortedBibliography[8][ONE] = "DOI:https://doi.org/" + bibliography[i][ONE] + ".\n\n";
                     break;
                 case "month":
-                    sortedBibliography[6][ZERO] = bibliography[i][ONE] + " ";
+                    sortedBibliography[SIX][ZERO] = bibliography[i][ONE] + " ";
                     break;
                 default:
                     break;
@@ -545,6 +468,7 @@ public class BibCreator {
 
         }
 
+        // Create the bibliographies
         String ieee_output = "", acm_output = "", nj_output = "";
         for (int index = ZERO; index < sortedBibliography.length; index++) {
             ieee_output += sortedBibliography[index][ZERO];
@@ -553,55 +477,8 @@ public class BibCreator {
         }
 
         String final_output[] = {ieee_output, acm_output, nj_output};
+        
+        // Return array of strings which contains the bibliography for each format
         return final_output;
     }
 }
-
-
-/*
- README
-
- array bibliography will contain all the values needed to construct the bibliography
- KEY         VALUE
- author 
- journal
- title
- year
- volume
- number
- pages
- keywords
- doi
- issn
-        
- bibliography[i][0] -> for all keys
- bibliography[i][1] -> for all values
-         
-
-
-        
- ex:  s1 = volume={PP},
-
- 0   1   2   3   4   5   6   7   8   9   10
- v   o   l   u   m   e   =   {   P   P   }   
-
-
- startIndex -> 6
- elementKey ->  s1.substring(0, startIndex) = s1.substring(0, 6) -> volume
- elementvalue -> s1.substring(startIndex + 2, s1.length() - 1) 
- -> s1.substring(8, 11 - 1) 
- -> s1.substring(8, 10) = PP
-         
-
-
- //BRAINSTORM
-
- startIndex -> 6
- elementKey ->  s1.substring(0, startIndex) = s1.substring(0, 6) -> volume
- elementvalue -> s1.substring(startIndex + 2, s1.length() - 1) 
- -> s1.substring(8, 11 - 1) 
- -> s1.substring(8, 10) = PP
-            
-
-
- */
