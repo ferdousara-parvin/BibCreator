@@ -1,32 +1,39 @@
-/**
- * Assignment 3: Practicing Exception Handling and File I/O
- * Written by: Viveka Anban(40063308) and Ferdousara Parvin(40062738)
- * Purpose:
- *
- */
-//DEBUGGER:
-////                System.out.println("Opening: " + "Bib_Files/" + FILENAME + (index + 1) + ".bib");
-//            
-//DEBUGGER:
-//                System.out.println("\nOpening: " + "Json_Files/" + IEEE + (index + 1) + ".json");
-//                System.out.println("Opening: " + "Json_Files/" + ACM + (index + 1) + ".json");
-//                System.out.println("Opening: " + "Json_Files/" + NJ + (index + 1) + ".json");
+// Assignment 3: Practicing Exception Handling and File I/O Written by: Viveka
+// Written by: Viveka Anban(40063308) and Ferdousara Parvin(40062738) 
 package bibcreator;
 
+// Imports
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.Scanner;
-import java.util.regex.Pattern;
 
+/**
+ * PURPOSE NOT DONEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE!!!!!!!
+ * <h1>BibCreator class is the driver class</h1>
+ * The purpose of this program is to review some concepts that we learnt
+ * previously concerning Exception Handling and File I/O. For this assignment,
+ * we had to create a BibCreator class which possessed 4 attributes (price,
+ * author, ISB, and title). We then implemented this class in the driver class
+ * called Assignment1 (which simulated a book store) to keep track of the books.
+ * We were able to add new Books to the "store", change information of a book,
+ * display all books by a specific author and display all books under a certain
+ * price <br>
+ * COMP249<br>
+ * Assignment 3 <br>
+ * Due date: Monday, March 19th, 2018</br>
+ *
+ * @author Viveka Anban(40063308) and Ferdousara Parvin(40062738) COMP249
+ */
 public class BibCreator {
 
+    // Declare the scanner and printwriter arrays that will be used to hold scanner and printwriter objects respectively
     static Scanner[] inputs;
     static PrintWriter[][] outputs;
 
-    //create number constants (it is created outside of main because it will be used in other methods)
+    // Create some constants that will be used throughout the whole program
     static final int ZERO = 0;
     static final int ONE = 1;
     static final int TWO = 2;
@@ -36,64 +43,64 @@ public class BibCreator {
     static final String ACM = "ACM";
     static final String NJ = "NJ";
 
+    /**
+     * This is the main method where all the scanners and printwriters are being
+     * created, and where all the different methods are invoked.
+     *
+     * @param args
+     */
     public static void main(String[] args) {
+
         // Print a welcome message
         System.out.println(
                 "--------------------------------------\n"
                 + " Welcome to Viveka and Ferdousara's program\n"
                 + "--------------------------------------------");
 
-        final String FILENAME = "Latex"; // every file that we will open starts with "Latex"
-        String jsonFileName = "";
-        int indexInputs = ZERO; // This index will be used to find which file we are currently opening.
-        int indexOutputs = ZERO; // This index will be used to find which file we are currently opening.
-        int counterInvalidFiles = ZERO;
+        // Create some variables
+        final String FILENAME = "Latex"; // We assume that every file that we will open starts with the word "Latex"
+        String jsonFileName = ""; // This variable stores the name of the current json file we are working with
+        int indexInputs = ZERO; // This index will be used to find which input file we are currently trying to read.
+        int indexOutputs = ZERO; // This index will be used to find which output file we are currently trying to open (this variable can only store numbers 0, 1 or 2).
+        int counterInvalidFiles = ZERO; // A counter to keep track of the number of invalid files (invalid files are the ones that contain at least one empty field)
 
-        // Create an arrays of scanners to create input streams
+        // Create an arrays of scanners to store each input stream in one single array
         inputs = new Scanner[TEN];
 
-        // Create a 2D array, that will contain an array of 3 PrintWriters for each files read
-        /*
-         outputs[i][0] represents IEEE, outputs[i][1] represents ACM and outputs[i][2] represents NJ. 
-         i represents the corresponding Bib_File
-         */
+        // Create a 2D array, that will contain an array of 3 PrintWriters for each input files read
+        // outputs[i][0] represents IEEE, outputs[i][1] represents ACM and outputs[i][2] represents NJ. 
+        // i corresponds to the corresponding Bib File
         outputs = new PrintWriter[TEN][THREE];
 
-        int index = ZERO; //This index will be used to find which file we are currently opening.
-
-        // Attempt opening each Bib file to read
+        // Attempt opening each Bib file to read using a try catch block
         try {
 
-            //Create a new Scanner to read from each Bib file  
+            // Create a new Scanner to read from each Bib file  
             for (indexInputs = ZERO; indexInputs < inputs.length; indexInputs++) {
                 inputs[indexInputs] = new Scanner(new FileInputStream("Bib_Files/" + FILENAME + (indexInputs + ONE) + ".bib"));
 
             }
 
-//TODO FERDOU: Call every file with their corresponding output file (will need to change method parameters first)
         } catch (FileNotFoundException e) {
 
             // Warning message
             System.out.println("Could not open input file " + FILENAME + (indexInputs + ONE) + ".bib" + " for reading. "
                     + "Please check if file exists! Program will terminate after closing any opened files.");
 
-            /*
-             Close all scanners that got to be opened: 
-             if Latex1.bib was not found, no scanners would have been created. 
-             if any other Latexi was not found, close all scanners starting 
-             from the scanner created for the previous file.
-             */
-            if (indexInputs != ZERO) {
+            // Clsoe all scanners that were opened prior to the one that was not able to be created because the requested inptu file was not found
+            if (indexInputs != ZERO) { // If sttaement to make sure that at least one scanner was created because or else, there would be nothing to close
                 for (int k = indexInputs - ONE; k >= ZERO; k--) {
                     inputs[k].close();
                 }
             }
 
+            // Exit the progrsm
             System.exit(ZERO);
 
         }
 
-        // Attempt creating the 3 json files where we will output bibliographies. Note that all ten Scanners have been created at this point and are opened
+        // Attempt creating the 3 json files where we will output bibliographies using a try catch block. 
+        // Note that all ten Scanners have been created at this point and are opened
         try {
 
             // Create 3 new printWriters for each Bib file
@@ -113,8 +120,14 @@ public class BibCreator {
                 indexOutputs = ZERO;
             }
 
+            // Invoke method processFilesForValidation
             for (int i = ZERO; i < inputs.length; i++) {
-                counterInvalidFiles += processFilesForValidation(inputs[i], outputs[i], (i + 1));
+                boolean incrementCounterInvalidFiles = processFilesForValidation(inputs[i], outputs[i], (i + 1));
+
+                if (incrementCounterInvalidFiles) // Bib input file was invalid
+                {
+                    counterInvalidFiles++; // Update the counter for the number of invalid files
+                }
             }
 
         } catch (FileNotFoundException e) {
@@ -130,7 +143,7 @@ public class BibCreator {
 
             }
 
-            // Delete all ouput files already created i ndirectory Json_Files
+            // Delete all ouput files already created in directory Json_Files
             deleteOutputFiles("Json_Files"); // delete all json files created in that directory
 
             // Close all scanners
@@ -140,7 +153,7 @@ public class BibCreator {
 
             System.exit(ZERO);
 
-        } finally {
+        } finally { // End of reading from Bib input files and outputting bibliographies into JSON output files
 
             // Close all scanners
             for (int k = ZERO; k < inputs.length; k++) {
@@ -154,6 +167,7 @@ public class BibCreator {
                 }
             }
 
+            // Print a message telling the user how many files were invalid
             System.out.println("\nA total of " + counterInvalidFiles + " files were invalid, and could not be processed. All other " + (TEN - counterInvalidFiles) + " \"Valid\" files have been created.");
 
             // Print closing message
@@ -165,76 +179,77 @@ public class BibCreator {
 
     }
 
+    /**
+     * This methods deletes output files that are linked to invalid input files
+     *
+     * @param pathDirectory Directory where there are files to be deleted
+     */
     public static void deleteOutputFiles(String pathDirectory) {
         File file = new File(pathDirectory);
 
-        if (file.isDirectory()) // if the path directory exists, proceed 
+        if (file.isDirectory()) // if the path directory exists, proceed to delete
         {
             String[] files = file.list(); // Retrieve all the file names in the directory
 
-            if (files.length > ZERO) {
-                for (String fileName : files) {
-                    File deleteFile = new File(pathDirectory + "/" + fileName);
-                    boolean deleted = deleteFile.delete();
-
-                    if (deleted) {
-                        System.out.println(deleteFile.getName() + " is deleted."); // To debug
-                    }
+            if (files.length > ZERO) { // if statement to verify that there are files in directory Json_Files
+                for (String fileName : files) { // For loop runs through files array 
+                    File deleteFile = new File(pathDirectory + "/" + fileName); // Create a file object for each output file to be deleted
+                    deleteFile.delete(); // delete file
                 }
             }
         }
-
     }
 
-    // Process one file at a time
-    public static int processFilesForValidation(Scanner input, PrintWriter[] output, int fileNumber) {
+    // Process one Bib input file at a time
+    /**
+     * This method processes one Bib input file at a time
+     *
+     * @param input Scanner object for Bib input file
+     * @param output An array of three printwriters for each Json output file
+     * @param fileNumber An int that represents the Bib input file's
+     * corresponding number
+     * @return boolean - Returns true if the Bib input file is invalid (contains
+     * an empty field) or false if it is valid
+     */
+    public static boolean processFilesForValidation(Scanner input, PrintWriter[] output, int fileNumber) {
 
-        // Set a }, like the delimiter so that every next() method reads until the following
+        boolean isNotValid = false; // Declare and initialize a boolean variable to check if the Bib input file is valid or not
+
+        // Set }, as the delimiter so that every next() method reads until the following },
         input.useDelimiter("\\}\\,");
-
-        int counterInvalidFiles = ZERO;
 
         try {
 
-            //This variable is used to number the articles in ACM bibliographies
+            // This variable is used to number the articles in ACM bibliographies
             int counterNbFiles = ZERO;
 
-            while (input.hasNext()) {
+            while (input.hasNext()) { // while there is another token
 
-                String s1 = input.next().trim(); // trim is used to eliminate leading and trailing spaces
+                String s1 = input.next().trim(); // s1 contains information between two }, delimiters. Trim is used to eliminate leading and trailing spaces
 
-                //If we encounter only a }, then it means that we are at the end of the file. as the last element ends with },.
-                /*
-                    month={February  }, // when the input.next() is called, only } will be read at the end of the file
-                }      
-                
-                At the end of the file #1, the program shouldn't even try reading "values" that could follow it.
-                 */
+                // If s1 is noly ocmposed of "}", then it means that we are at the end of the file, as the last element ends with },.
                 if (s1.trim().equals("}")) {
-                    break;
+                    break; // Get otu of the whiel loop
                 }
 
-                String[][] bibliography = new String[11][2];
+                // Create a 2d array called bibliography to store element keys and element values. There are 11 of them.
+                String[][] bibliography = new String[11][TWO];
 
+                // For loop to run through bibliography array
                 for (int i = ZERO; i < bibliography.length; i++) {
 
+                    // 1. Determine the element key 
                     String elementKey;
 
-                    //Determine th element key
-                    if (s1.contains("@ARTICLE{")) {
+                    if (s1.contains("@ARTICLE{")) { // Special case: beginning of an article, retrieve first element key
                         counterNbFiles++;
 //DEBUGGER:                        
                         System.out.println("\n" + fileNumber + " ARTICLE #" + counterNbFiles);
-                        elementKey = s1.substring(s1.lastIndexOf(",") + ONE, s1.indexOf("=")).trim();
 
-                        /*
-                         At the beginning of an article, the first element is enclosed between , and =.                         
-                         */
-                    } else {
-                        elementKey = s1.substring(ZERO, s1.indexOf("=")).trim();
-                        /*
-                        Every following elements are enclosed before the = sign.
-                         */
+                        elementKey = s1.substring(s1.lastIndexOf(",") + ONE, s1.indexOf("=")).trim(); // at beginning of an article, first element key is enclosed between , and =
+
+                    } else { // for every following field/element key
+                        elementKey = s1.substring(ZERO, s1.indexOf("=")).trim(); // every element key runs from index 0 to the index before the = character
                     }
 
 //DEBUGGER:                   
@@ -243,13 +258,13 @@ public class BibCreator {
 //DEBUGGER:                    
                     System.out.println("KEY:" + elementKey);
 
-                    //Determine the element value.
+                    // 2. Determine the element value.
                     String elementValue = s1.substring(s1.lastIndexOf("{") + 1, s1.length()).trim();
                     bibliography[i][ONE] = elementValue.trim();
 
                     // Invalid input file (empty field)
                     if (elementValue.trim().isEmpty()) {
-                        counterInvalidFiles++;
+                        isNotValid = true;
                         throw new FileInvalidException(
                                 "Error: Detected Empty Field!"
                                 + "\n========================="
@@ -273,22 +288,29 @@ public class BibCreator {
             }
 
         } catch (FileInvalidException e) {
-            System.out.println(e);
+            System.out.println(e); // Print error/warning message
 
-            // Delete the three output files that correspond to the invalid input file
             File invalidFile1 = new File("Json_Files/" + IEEE + fileNumber + ".json");
             File invalidFile2 = new File("Json_Files/" + ACM + fileNumber + ".json");
             File invalidFile3 = new File("Json_Files/" + NJ + fileNumber + ".json");
 
+            // Delete Json output files that correspond to the invalid Bib input file
             invalidFile1.delete();
             invalidFile2.delete();
             invalidFile3.delete();
 
         }
 
-        return counterInvalidFiles;
+        // Return statement
+        return isNotValid;
     }
 
+    /**
+     *
+     * @param bibliography
+     * @param counterNbFiles
+     * @return
+     */
     public static String[] makeBibliography(String[][] bibliography, int counterNbFiles) {
 
 
@@ -333,7 +355,7 @@ public class BibCreator {
                 break;
             }
         }
-        
+
         //Add the year only to ACM to the bibliography
         for (int i = 0; i < bibliography.length; i++) {
             if (bibliography[i][ZERO].equals("year")) {
@@ -431,13 +453,19 @@ public class BibCreator {
         return final_output;
     }
 
+    /**
+     *
+     * @param bibliography
+     * @param counterNbFiles
+     * @return
+     */
     public static String[] makeBibliography2(String[][] bibliography, int counterNbFiles) {
-        
+
         //This will contain all the elements that IEEE, ACM and NJ bibliographies would need in their order.
         String[][] sortedBibliography = new String[9][3];
 
         for (int i = ZERO; i < sortedBibliography.length; i++) {
-            for(int j = ZERO; j < sortedBibliography[i].length; j++){
+            for (int j = ZERO; j < sortedBibliography[i].length; j++) {
                 sortedBibliography[i][j] = "";
             }
         }
@@ -558,15 +586,15 @@ public class BibCreator {
  v   o   l   u   m   e   =   {   P   P   }   
 
 
-        startIndex -> 6
-        elementKey ->  s1.substring(0, startIndex) = s1.substring(0, 6) -> volume
-        elementvalue -> s1.substring(startIndex + 2, s1.length() - 1) 
-        -> s1.substring(8, 11 - 1) 
-        -> s1.substring(8, 10) = PP
+ startIndex -> 6
+ elementKey ->  s1.substring(0, startIndex) = s1.substring(0, 6) -> volume
+ elementvalue -> s1.substring(startIndex + 2, s1.length() - 1) 
+ -> s1.substring(8, 11 - 1) 
+ -> s1.substring(8, 10) = PP
          
 
 
-//BRAINSTORM
+ //BRAINSTORM
 
  startIndex -> 6
  elementKey ->  s1.substring(0, startIndex) = s1.substring(0, 6) -> volume
