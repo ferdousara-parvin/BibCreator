@@ -1,4 +1,4 @@
-// Assignment 3: Practicing Exception Handling and File I/O Written by: Viveka
+// Assignment 3: Practicing Exception Handling and File I/O
 // Written by: Viveka Anban(40063308) and Ferdousara Parvin(40062738) 
 package bibcreator;
 
@@ -18,7 +18,7 @@ import java.util.Scanner;
  * The purpose of this program is to review some concepts that we learnt
  * previously concerning Exception Handling and File I/O. For this assignment,
  * we had to create a BibCreator class which reads from Bib files containing one or more articles
- * and created 3 types of formatted bibliographies  (IEEE, ACM, and NJ) which are written in JSON outputfiles.
+ * and created 3 types of formatted bibliographies (IEEE, ACM, and NJ) which are written in JSON outputfiles.
  * The program also lets the user review any of the JSON files <br>
  * @author Viveka Anban (40063308) and Ferdousara Parvin (40062738)
  * COMP249<br>
@@ -340,7 +340,7 @@ public class BibCreator {
 
                     }
                     
-                    // Retrieve the next token todo: WHATTTTTTTTTTTTTTTTTT WHY -ONE
+                    // Retrieve the next token
                     if (i < bibliography.length - ONE) { 
                         s1 = input.next().trim();
                     }
@@ -355,12 +355,12 @@ public class BibCreator {
 
             }
 
-        } catch (FileInvalidException e) { // todo: doesnt workkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk
+        } catch (FileInvalidException e) {
             System.out.println(e); // Print error/warning message
 
-            File invalidFile1 = new File("Json_Files\\" + IEEE + fileNumber + ".json");
-            File invalidFile2 = new File("Json_Files\\" + ACM + fileNumber + ".json");
-            File invalidFile3 = new File("Json_Files\\" + NJ + fileNumber + ".json");
+            File invalidFile1 = new File("Json_Files/" + IEEE + fileNumber + ".json");
+            File invalidFile2 = new File("Json_Files/" + ACM + fileNumber + ".json");
+            File invalidFile3 = new File("Json_Files/" + NJ + fileNumber + ".json");
 
             // Delete Json output files that correspond to the invalid Bib input file
             invalidFile1.delete();
@@ -405,7 +405,7 @@ public class BibCreator {
 
                         authors[a] = authors[a].trim();
 
-                        //IEEE and NJ OUTPUT
+                        // IEEE and NJ author
                         if (a < authors.length - ONE) {
                             sortedBibliography[ZERO][ZERO] += authors[a] + ", ";
                             sortedBibliography[ZERO][TWO] += authors[a] + " & ";
@@ -414,8 +414,8 @@ public class BibCreator {
                             sortedBibliography[ZERO][TWO] += authors[a] + ". ";
                         }
 
-                        //ACM OUTPUT
-                        if (authors.length == ONE) { // todo: ONE NOT ZERO RIGHHHHHHHHHHHHHHHHHHHHHHHTTTTT???????
+                        // ACM author
+                        if (authors.length == ONE) { 
                             sortedBibliography[ZERO][ONE] += authors[a] + ". ";
                         } else if (a == ZERO) {
                             sortedBibliography[ZERO][ONE] += authors[a] + " et al. ";
