@@ -1,5 +1,5 @@
 // Assignment 3: Practicing Exception Handling and File I/O
-// Written by: Viveka Anban(40063308) and Ferdousara Parvin(40062738) 
+
 package bibcreator;
 
 // Imports
@@ -20,7 +20,6 @@ import java.util.Scanner;
  * we had to create a BibCreator class which reads from Bib files containing one or more articles
  * and created 3 types of formatted bibliographies (IEEE, ACM, and NJ) which are written in JSON outputfiles.
  * The program also lets the user review any of the JSON files <br>
- * @author Viveka Anban (40063308) and Ferdousara Parvin (40062738)
  * COMP249<br>
  * Assignment 3 <br>
  * Due date: Monday, March 19th, 2018</br>
