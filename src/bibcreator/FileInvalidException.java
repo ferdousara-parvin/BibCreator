@@ -1,11 +1,10 @@
 // Assignment 3: Practicing Exception Handling and File I/O Written by: Viveka
-// Written by: Viveka Anban(40063308) and Ferdousara Parvin(40062738)
+
 package bibcreator;
 
 /**
  * <h1>FileInvalidException class is an exception class</h1>
  * This class is invoked when there are invalid files that are being read.
- * @author Viveka Anban (40063308) and Ferdousara Parvin (40062738)
  * COMP249<br>
  * Assignment 3 <br>
  * Due date: Monday, March 19th, 2018</br>
